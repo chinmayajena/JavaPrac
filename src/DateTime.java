@@ -5,24 +5,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import com.sun.media.jfxmedia.logging.Logger;
-
 
 
 public class DateTime {
   
   
   static String localTimeZone = "Asia/Singapore";
-
+  static TimeZone tz = TimeZone.getTimeZone(localTimeZone);
   public static void main(String[] args) throws ParseException {
     TimeZone tz = TimeZone.getTimeZone(localTimeZone);
     SimpleDateFormat sdf = new SimpleDateFormat();
     sdf.setTimeZone(tz);
     
-    //System.out.println(getWaveEndTimeDiffFromCurrent("22:30","02:00") );
+    System.out.println(getWaveEndTimeDiffFromCurrent("22:30","07:00") );
     //System.out.println(getTimeStringFromTimeStamp(new Timestamp(1451998080000L)));
     
-    System.out.println(getRefreshInterval(1453878063954L));
+    //System.out.println(getRefreshInterval(1453878063954L));
   }
   
   
@@ -82,7 +80,7 @@ public class DateTime {
  
   
   
-  public static double getWaveEndTimeDiffFromCurrent(String startHour, String endHour) {
+/*  public static double getWaveEndTimeDiffFromCurrent(String startHour, String endHour) {
     Calendar calendarWaveStartTime = getTimeFromString(startHour);
     Calendar calendarWaveEndTime = getTimeFromString(endHour);
     Calendar calendarCurrentTime = getTimeFromString("23:30");//Calendar.getInstance(TimeZone.getTimeZone("Singapore"));
@@ -95,7 +93,32 @@ public class DateTime {
   
     return timeDiff/60000;
   }
+  */
   
+  
+  public static double getWaveEndTimeDiffFromCurrent(String startHour, String endHour) {
+    Calendar calendarWaveStartTime =  getTimeFromString("22:30"); // 22:30
+    Calendar calendarWaveEndTime = getTimeFromString("04:00"); // 7:00
+    Calendar calendarCurrentTime = getTimeFromString("5:00"); //10:28, 23:00
+    if (calendarWaveStartTime.get(Calendar.HOUR_OF_DAY) > calendarWaveEndTime
+        .get(Calendar.HOUR_OF_DAY)) {
+      calendarWaveEndTime.add(Calendar.DAY_OF_YEAR, 1);
+    }
+    
+    if (calendarWaveStartTime.get(Calendar.HOUR_OF_DAY) > calendarCurrentTime
+        .get(Calendar.HOUR_OF_DAY)) {
+      calendarCurrentTime.add(Calendar.DAY_OF_YEAR, 1);
+    }
+    double timeDiff = Math.toIntExact((calendarWaveEndTime.getTimeInMillis()-calendarCurrentTime.getTimeInMillis()));
+  /*  if(calendarWaveStartTime.get(Calendar.HOUR_OF_DAY) > calendarWaveEndTime.get(Calendar.HOUR_OF_DAY) && timeDiff < 0 ){
+      System.out.println("Time diff less than zero. Adding 24 hrs as it is special case");
+      if (calendarWaveStartTime.get(Calendar.HOUR_OF_DAY) < calendarCurrentTime.get(Calendar.HOUR_OF_DAY)) {
+        timeDiff+=86400000;
+      }
+    }
+  */
+    return timeDiff/60000;
+  }
   
   
   public static String getDeliverySlotRange(Long time, int length){
